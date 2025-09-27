@@ -6,8 +6,10 @@
         <div
           class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white p-6"
         >
-          <div class="flex justify-between items-center">
-            <div>
+          <div
+            class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4"
+          >
+            <div class="flex-1">
               <h1 class="text-3xl font-bold">👥 Concursantes</h1>
               <h2 class="text-xl font-semibold text-purple-100">
                 Hotel Mirador del Lago
@@ -16,16 +18,16 @@
                 Gestiona los participantes del concurso de San Valentín
               </p>
             </div>
-            <div class="flex gap-3">
+            <div class="flex gap-3 flex-wrap">
               <NuxtLink
                 to="/admin/winner"
-                class="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                class="bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex-1 sm:flex-none min-w-fit text-center"
               >
                 🏆 Sorteo
               </NuxtLink>
               <button
                 @click="logout"
-                class="bg-red-500 hover:bg-red-600 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                class="bg-red-500 hover:bg-red-600 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex-1 sm:flex-none min-w-fit"
               >
                 🚪 Salir
               </button>
@@ -35,8 +37,9 @@
 
         <!-- Filtros -->
         <div class="p-6 border-b border-gray-200 bg-gray-50">
-          <div class="flex gap-4 items-center flex-wrap">
-            <div class="flex-1 min-w-64">
+          <div class="flex flex-col lg:flex-row gap-4">
+            <!-- Search bar -->
+            <div class="flex-1 lg:min-w-0">
               <input
                 type="text"
                 v-model.trim="search"
@@ -44,22 +47,24 @@
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
               />
             </div>
-            <div>
+
+            <!-- Selector y botón -->
+            <div class="flex gap-4 lg:gap-3 lg:flex-shrink-0">
               <select
                 v-model="verifiedFilter"
-                class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white"
+                class="flex-1 lg:flex-none lg:min-w-48 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white"
               >
                 <option value="">📋 Todos</option>
                 <option value="true">✅ Verificados</option>
                 <option value="false">⏳ No verificados</option>
               </select>
+              <button
+                @click="applyFilters"
+                class="flex-1 lg:flex-none bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 whitespace-nowrap"
+              >
+                🔍 Buscar
+              </button>
             </div>
-            <button
-              @click="applyFilters"
-              class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
-            >
-              🔍 Buscar
-            </button>
           </div>
         </div>
 
@@ -120,15 +125,17 @@
                   <td class="px-6 py-4">
                     <span
                       v-if="c.is_verified"
-                      class="bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium border border-green-200"
+                      class="inline-flex items-center gap-1.5 bg-green-100 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium border border-green-200 whitespace-nowrap"
                     >
-                      ✅ Verificado
+                      <span class="text-green-500">●</span>
+                      <span>Verificado</span>
                     </span>
                     <span
                       v-else
-                      class="bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium border border-amber-200"
+                      class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full text-sm font-medium border border-amber-200 whitespace-nowrap"
                     >
-                      ⏳ Pendiente
+                      <span class="text-amber-500">●</span>
+                      <span>Pendiente</span>
                     </span>
                   </td>
                   <td class="px-6 py-4 text-gray-500 text-sm">
@@ -186,14 +193,12 @@ const totalCount = ref(0);
 const fetchContestants = async () => {
   loading.value = true;
   try {
-    // 🔧 CONSTRUIR PARÁMETROS DINÁMICAMENTE
     const params = {
       search: search.value || "",
       page: currentPage.value,
       page_size: pageSize,
     };
 
-    // SOLO AGREGAR verified si tiene valor
     if (verifiedFilter.value !== "") {
       params.verified = verifiedFilter.value;
     }

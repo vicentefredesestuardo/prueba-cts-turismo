@@ -6,23 +6,25 @@
         <div
           class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white p-6 rounded-t-lg"
         >
-          <div class="flex justify-between items-center">
-            <div>
+          <div
+            class="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4"
+          >
+            <div class="flex-1">
               <h1 class="text-2xl font-bold">🏆 Sorteo de Ganador</h1>
               <h2 class="text-lg font-semibold text-purple-100">
                 Hotel Mirador del Lago
               </h2>
             </div>
-            <div class="flex gap-3">
+            <div class="flex gap-3 flex-wrap">
               <NuxtLink
                 to="/admin/contestants"
-                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex-1 sm:flex-none min-w-fit text-center"
               >
                 👥 Concursantes
               </NuxtLink>
               <button
                 @click="logout"
-                class="bg-red-500 hover:bg-red-600 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+                class="bg-red-500 hover:bg-red-600 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex-1 sm:flex-none min-w-fit"
               >
                 🚪 Salir
               </button>
