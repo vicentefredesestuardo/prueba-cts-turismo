@@ -12,6 +12,12 @@ export const useApi = () => {
         ...(options.headers || {}),
       },
       ...options,
+    }).catch(error => {
+      // Marcar errores de red
+      if (!error.status) {
+        error.isNetworkError = true
+      }
+      throw error
     })
   }
 

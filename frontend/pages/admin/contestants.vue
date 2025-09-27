@@ -158,6 +158,11 @@
               {{ p }}
             </button>
           </div>
+
+          <!-- Mensaje de error/estado -->
+          <div v-if="message" class="mt-6 p-4 rounded-md" :class="messageClass">
+            {{ message }}
+          </div>
         </div>
       </div>
     </div>
@@ -176,6 +181,8 @@ const { getContestants } = useApi();
 
 const contestants = ref([]);
 const loading = ref(false);
+const message = ref("");
+const messageClass = ref("");
 const search = ref("");
 const verifiedFilter = ref("");
 const currentPage = ref(1);
@@ -185,6 +192,8 @@ const totalCount = ref(0);
 
 const fetchContestants = async () => {
   loading.value = true;
+  message.value = "";
+  messageClass.value = "";
   try {
     // 🔧 CONSTRUIR PARÁMETROS DINÁMICAMENTE
     const params = {
@@ -205,9 +214,21 @@ const fetchContestants = async () => {
     totalPages.value = Math.max(1, Math.ceil(totalCount.value / pageSize));
   } catch (e) {
     if (e?.status === 401) {
+      message.value =
+        "Tu sesión ha expirado. Por favor inicia sesión nuevamente.";
+      messageClass.value =
+        "bg-yellow-100 text-yellow-800 border border-yellow-300";
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      return router.push("/admin/login");
+      setTimeout(() => router.push("/admin/login"), 2000);
+      return;
+    } else if (e?.status >= 500) {
+      message.value = "Error del servidor. Inténtalo en unos minutos.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
+    } else if (e?.isNetworkError) {
+      message.value =
+        "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
     }
   } finally {
     loading.value = false;

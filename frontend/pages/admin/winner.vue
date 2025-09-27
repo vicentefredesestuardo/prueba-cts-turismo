@@ -132,9 +132,20 @@ const loadWinner = async () => {
       winner.value = null;
       message.value = "";
     } else if (e?.status === 401) {
+      message.value =
+        "Tu sesión ha expirado. Por favor inicia sesión nuevamente.";
+      messageClass.value =
+        "bg-yellow-100 text-yellow-800 border border-yellow-300";
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      router.push("/admin/login");
+      setTimeout(() => router.push("/admin/login"), 2000);
+    } else if (e?.status >= 500) {
+      message.value = "Error del servidor. Inténtalo en unos minutos.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
+    } else if (e?.isNetworkError) {
+      message.value =
+        "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
     } else {
       message.value = "Error al consultar el ganador.";
       messageClass.value = "bg-red-100 text-red-700 border border-red-300";
@@ -162,10 +173,21 @@ const draw = async () => {
       messageClass.value =
         "bg-yellow-100 text-yellow-700 border border-yellow-300";
     } else if (e?.status === 401) {
+      message.value =
+        "Tu sesión ha expirado. Por favor inicia sesión nuevamente.";
+      messageClass.value =
+        "bg-yellow-100 text-yellow-800 border border-yellow-300";
       localStorage.removeItem("access_token");
       localStorage.removeItem("refresh_token");
-      router.push("/admin/login");
+      setTimeout(() => router.push("/admin/login"), 2000);
       return;
+    } else if (e?.status >= 500) {
+      message.value = "Error del servidor. Inténtalo en unos minutos.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
+    } else if (e?.isNetworkError) {
+      message.value =
+        "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
+      messageClass.value = "bg-red-100 text-red-700 border border-red-300";
     } else {
       message.value = "Error al realizar el sorteo. Intenta nuevamente.";
       messageClass.value = "bg-red-100 text-red-700 border border-red-300";

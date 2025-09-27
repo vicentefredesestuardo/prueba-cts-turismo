@@ -17,34 +17,83 @@
 
       <form @submit.prevent="handleSubmit" class="space-y-4" novalidate>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Nombre(s)</label
+          <label
+            for="first_name"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Nombre(s) <span class="text-red-600">*</span></label
           >
           <input
+            id="first_name"
             type="text"
             v-model.trim="form.first_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            @blur="
+              markTouched('first_name');
+              validateField('first_name');
+            "
+            @input="touched.first_name && validateField('first_name')"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.first_name && (touched.first_name || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-pink-500',
+            ]"
+            :aria-invalid="
+              errors.first_name && (touched.first_name || triedSubmit)
+            "
             required
           />
+          <p
+            v-if="errors.first_name && (touched.first_name || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.first_name }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Apellido Paterno</label
+          <label
+            for="last_name"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Apellido Paterno <span class="text-red-600">*</span></label
           >
           <input
+            id="last_name"
             type="text"
             v-model.trim="form.last_name"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            @blur="
+              markTouched('last_name');
+              validateField('last_name');
+            "
+            @input="touched.last_name && validateField('last_name')"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.last_name && (touched.last_name || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-pink-500',
+            ]"
+            :aria-invalid="
+              errors.last_name && (touched.last_name || triedSubmit)
+            "
             required
           />
+          <p
+            v-if="errors.last_name && (touched.last_name || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.last_name }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
+          <label
+            for="second_last_name"
+            class="block text-sm font-medium text-gray-700 mb-1"
             >Apellido Materno</label
           >
           <input
+            id="second_last_name"
             type="text"
             v-model.trim="form.second_last_name"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -52,30 +101,69 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Correo Electrónico</label
+          <label
+            for="email"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Correo Electrónico <span class="text-red-600">*</span></label
           >
           <input
+            id="email"
             type="email"
             v-model="form.email"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            @blur="
+              markTouched('email');
+              validateField('email');
+            "
+            @input="touched.email && validateField('email')"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.email && (touched.email || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-pink-500',
+            ]"
+            :aria-invalid="errors.email && (touched.email || triedSubmit)"
             required
           />
+          <p
+            v-if="errors.email && (touched.email || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.email }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Teléfono</label
+          <label
+            for="phone"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Teléfono <span class="text-red-600">*</span></label
           >
           <input
+            id="phone"
             type="tel"
             v-model="form.phone"
+            @blur="
+              markTouched('phone');
+              validateField('phone');
+            "
+            @input="touched.phone && validateField('phone')"
             placeholder="+56912345678"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.phone && (touched.phone || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-pink-500',
+            ]"
+            :aria-invalid="errors.phone && (touched.phone || triedSubmit)"
             required
           />
-          <p v-if="phoneError" class="text-sm text-red-600 mt-1">
-            {{ phoneError }}
+          <p
+            v-if="errors.phone && (touched.phone || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.phone }}
           </p>
         </div>
 
@@ -115,14 +203,80 @@ const form = ref({
 const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
-const phoneError = ref("");
 
-const e164 = /^\+?[1-9]\d{7,14}$/; // mismo criterio que tu validador del backend
+// Estado de validación
+const errors = ref({});
+const touched = ref({});
+const triedSubmit = ref(false);
+
+// Helpers de validación
+const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+const isE164 = (s) => /^\+?[1-9]\d{7,14}$/.test(s);
+
+const markTouched = (field) => {
+  touched.value[field] = true;
+};
+
+const validateField = (field) => {
+  const value = form.value[field];
+
+  // Limpiar error anterior
+  delete errors.value[field];
+
+  switch (field) {
+    case "first_name":
+      if (!value || value.trim().length === 0) {
+        errors.value[field] = "Ingresa tu nombre.";
+      } else if (value.trim().length < 2) {
+        errors.value[field] = "El nombre debe tener al menos 2 caracteres.";
+      }
+      break;
+
+    case "last_name":
+      if (!value || value.trim().length === 0) {
+        errors.value[field] = "Ingresa tu apellido paterno.";
+      } else if (value.trim().length < 2) {
+        errors.value[field] = "El apellido debe tener al menos 2 caracteres.";
+      }
+      break;
+
+    case "email":
+      if (!value || value.trim().length === 0) {
+        errors.value[field] = "Ingresa tu correo.";
+      } else if (!isEmail(value.trim())) {
+        errors.value[field] = "Ingresa un correo válido.";
+      }
+      break;
+
+    case "phone":
+      if (!value || value.trim().length === 0) {
+        errors.value[field] = "Ingresa tu teléfono.";
+      } else if (!isE164(value.trim())) {
+        errors.value[field] =
+          "Ingresa un teléfono válido en formato internacional, ej: +56912345678.";
+      }
+      break;
+  }
+};
+
+const validateAll = () => {
+  const fields = ["first_name", "last_name", "email", "phone"];
+  fields.forEach((field) => {
+    touched.value[field] = true;
+    validateField(field);
+  });
+  return Object.keys(errors.value).length === 0;
+};
 
 const handleSubmit = async () => {
   message.value = "";
   messageClass.value = "";
-  phoneError.value = "";
+  triedSubmit.value = true;
+
+  // Validar antes de enviar
+  if (!validateAll()) {
+    return;
+  }
 
   // Normaliza email y phone para coincidir con backend
   const payload = {
@@ -132,13 +286,6 @@ const handleSubmit = async () => {
     email: (form.value.email || "").trim().toLowerCase(),
     phone: (form.value.phone || "").trim(),
   };
-
-  // Validación rápida de teléfono (evita ida y vuelta inútil)
-  if (!e164.test(payload.phone)) {
-    phoneError.value =
-      "Ingrese un teléfono válido en formato internacional (E.164), ej: +56912345678.";
-    return;
-  }
 
   loading.value = true;
   try {
@@ -156,18 +303,21 @@ const handleSubmit = async () => {
       email: "",
       phone: "",
     };
+    errors.value = {};
+    touched.value = {};
+    triedSubmit.value = false;
   } catch (e) {
-    // Muestra el primer error que venga del serializer
-    const data = e?.data || {};
-    const first =
-      data.email ||
-      data.phone ||
-      data.first_name ||
-      data.last_name ||
-      data.non_field_errors?.[0] ||
-      "Error al procesar tu inscripción. Intenta nuevamente.";
-    const msg = Array.isArray(first) ? first[0] : first;
-    message.value = msg;
+    if (e?.status === 400) {
+      message.value =
+        "Revisa los datos ingresados. Puede que el correo ya esté registrado.";
+    } else if (e?.status >= 500) {
+      message.value = "Error del servidor. Inténtalo en unos minutos.";
+    } else if (e?.isNetworkError) {
+      message.value =
+        "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
+    } else {
+      message.value = "Error al procesar tu inscripción. Intenta nuevamente.";
+    }
     messageClass.value = "bg-red-100 text-red-700 border border-red-300";
   } finally {
     loading.value = false;

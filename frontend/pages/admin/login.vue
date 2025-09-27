@@ -15,29 +15,71 @@
 
       <form @submit.prevent="handleLogin" class="space-y-4" novalidate>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Usuario</label
+          <label
+            for="username"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Usuario <span class="text-red-600">*</span></label
           >
           <input
+            id="username"
             type="text"
             v-model.trim="form.username"
+            @blur="
+              markTouched('username');
+              validateField('username');
+            "
+            @input="touched.username && validateField('username')"
             autocomplete="username"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.username && (touched.username || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-blue-500',
+            ]"
+            :aria-invalid="errors.username && (touched.username || triedSubmit)"
             required
           />
+          <p
+            v-if="errors.username && (touched.username || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.username }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1"
-            >Contraseña</label
+          <label
+            for="password"
+            class="block text-sm font-medium text-gray-700 mb-1"
+            >Contraseña <span class="text-red-600">*</span></label
           >
           <input
+            id="password"
             type="password"
             v-model="form.password"
+            @blur="
+              markTouched('password');
+              validateField('password');
+            "
+            @input="touched.password && validateField('password')"
             autocomplete="current-password"
-            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :class="[
+              'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2',
+              errors.password && (touched.password || triedSubmit)
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-blue-500',
+            ]"
+            :aria-invalid="errors.password && (touched.password || triedSubmit)"
             required
           />
+          <p
+            v-if="errors.password && (touched.password || triedSubmit)"
+            class="mt-1 text-sm text-red-600"
+            role="alert"
+          >
+            {{ errors.password }}
+          </p>
         </div>
 
         <button
@@ -71,6 +113,45 @@ const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
 
+// Estado de validación
+const errors = ref({});
+const touched = ref({});
+const triedSubmit = ref(false);
+
+const markTouched = (field) => {
+  touched.value[field] = true;
+};
+
+const validateField = (field) => {
+  const value = form.value[field];
+
+  // Limpiar error anterior
+  delete errors.value[field];
+
+  switch (field) {
+    case "username":
+      if (!value || value.trim().length === 0) {
+        errors.value[field] = "Ingresa tu usuario.";
+      }
+      break;
+
+    case "password":
+      if (!value || value.length === 0) {
+        errors.value[field] = "Ingresa tu contraseña.";
+      }
+      break;
+  }
+};
+
+const validateAll = () => {
+  const fields = ["username", "password"];
+  fields.forEach((field) => {
+    touched.value[field] = true;
+    validateField(field);
+  });
+  return Object.keys(errors.value).length === 0;
+};
+
 // Si ya hay token válido, manda directo al panel
 onMounted(() => {
   if (process.client) {
@@ -91,8 +172,17 @@ function isExpired(jwt) {
 
 const handleLogin = async () => {
   if (loading.value) return;
-  loading.value = true;
+
+  triedSubmit.value = true;
   message.value = "";
+  messageClass.value = "";
+
+  // Validar antes de enviar
+  if (!validateAll()) {
+    return;
+  }
+
+  loading.value = true;
 
   try {
     // Llama al backend: POST /api/admin/login/
@@ -106,10 +196,16 @@ const handleLogin = async () => {
 
     router.push("/admin/contestants");
   } catch (e) {
-    // DRF / SimpleJWT suelen devolver .data.detail o .data.non_field_errors
-    const detail = e?.data?.detail || e?.data?.non_field_errors?.[0];
-    message.value =
-      detail || "Credenciales inválidas o no tienes permisos de administrador.";
+    if (e?.status === 401 || e?.status === 400) {
+      message.value = "Credenciales inválidas. Revisa tu usuario y contraseña.";
+    } else if (e?.status >= 500) {
+      message.value = "Error del servidor. Inténtalo en unos minutos.";
+    } else if (e?.isNetworkError) {
+      message.value =
+        "No se pudo conectar con el servidor. Verifica tu conexión a internet.";
+    } else {
+      message.value = "Credenciales inválidas. Revisa tu usuario y contraseña.";
+    }
     messageClass.value = "bg-red-100 text-red-700 border border-red-300";
   } finally {
     loading.value = false;
