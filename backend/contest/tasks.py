@@ -5,7 +5,8 @@ from .models import Contestant
 
 def _send_html_email(subject, text, html, to):
     """Helper para enviar emails HTML"""
-    msg = EmailMultiAlternatives(subject, text, settings.DEFAULT_FROM_EMAIL, [to])
+    from_email = f"{settings.HOTEL_NAME} <{settings.DEFAULT_FROM_EMAIL}>"
+    msg = EmailMultiAlternatives(subject, text, from_email, [to])
     msg.attach_alternative(html, "text/html")
     msg.send()
 
@@ -16,20 +17,20 @@ def send_verification_email(contestant_id, token):
         c = Contestant.objects.get(id=contestant_id)
         verification_url = f"{settings.FRONTEND_URL}/verify?token={token}"
         
-        subject = "Verifica tu email - Concurso San Valentín"
-        text = f"Hola {c.full_name}\n\nPara participar, verifica tu correo: {verification_url}\n(Este enlace expira en 2 horas)"
+        subject = f"[{settings.HOTEL_NAME}] Verifica tu email – Concurso San Valentín"
+        text = f"Hola {c.full_name}\n\nPara participar en el concurso de San Valentín del {settings.HOTEL_NAME}, verifica tu correo: {verification_url}\n(Este enlace expira en 2 horas)"
         html = f"""
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
             <h2 style="color: #e91e63;">¡Hola {c.full_name}!</h2>
-            <p>¡Gracias por inscribirte en nuestro concurso de San Valentín!</p>
+            <p>¡Gracias por inscribirte en el concurso de San Valentín del <strong>{settings.HOTEL_NAME}</strong>!</p>
             <p>Para completar tu registro y participar en el sorteo, haz clic en el siguiente botón:</p>
             <div style="text-align: center; margin: 30px 0;">
-                <a href="{verification_url}" style="background-color: #e91e63; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    Verificar mi cuenta
-                </a>
+            <a href="{verification_url}" style="background-color: #e91e63; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                Verificar mi cuenta
+            </a>
             </div>
             <p><small style="color: #666;">Este enlace expira en 2 horas.</small></p>
-            <p>¡Buena suerte!<br><strong>CTS Turismo</strong></p>
+            <p>¡Buena suerte!<br><strong>{settings.HOTEL_NAME}</strong></p>
         </div>
         """
         
@@ -44,18 +45,18 @@ def send_winner_notification(contestant_id):
     try:
         c = Contestant.objects.get(id=contestant_id)
         
-        subject = "🎉 ¡FELICIDADES! Ganaste el Concurso San Valentín"
-        text = f"¡Hola {c.full_name}!\n\n¡Felicitaciones! Eres el ganador del concurso de San Valentín.\nTe contactaremos pronto para coordinar tu premio."
+        subject = f"🎉 ¡FELICIDADES! Eres el ganador – {settings.HOTEL_NAME}"
+        text = f"¡Hola {c.full_name}!\n\n¡Felicitaciones! Eres el ganador del concurso de San Valentín del {settings.HOTEL_NAME}.\nTe contactaremos pronto para coordinar tu premio."
         html = f"""
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
             <h1 style="color: #e91e63;">🎉 ¡FELICIDADES! 🎉</h1>
             <h2>¡Hola {c.full_name}!</h2>
             <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                <p style="font-size: 18px;"><strong>¡Has sido seleccionado como el GANADOR de nuestro concurso de San Valentín!</strong></p>
-                <p style="font-size: 16px; color: #e91e63;"><strong>🏆 Tu premio: 2 noches todo pagado para una pareja en un hotel</strong></p>
+                <p style="font-size: 18px;"><strong>¡Has sido seleccionado como el GANADOR del concurso de San Valentín del <strong>{settings.HOTEL_NAME}</strong>!</strong></p>
+                <p style="font-size: 16px; color: #e91e63;"><strong>🏆 Tu premio: 2 noches románticas en nuestro hotel</strong></p>
             </div>
             <p>Nos pondremos en contacto contigo pronto para coordinar todos los detalles.</p>
-            <p>¡Disfruta tu premio!<br><strong>CTS Turismo</strong></p>
+            <p>¡Disfruta tu premio!<br><strong>{settings.HOTEL_NAME}</strong><br><em>Escápate con estilo</em></p>
         </div>
         """
         

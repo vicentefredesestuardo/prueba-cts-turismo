@@ -3,21 +3,28 @@
     <div class="max-w-4xl mx-auto">
       <div class="bg-white rounded-lg shadow-lg">
         <!-- Header -->
-        <div class="bg-purple-600 text-white p-6 rounded-t-lg">
+        <div
+          class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white p-6 rounded-t-lg"
+        >
           <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold">🏆 Sorteo de Ganador</h1>
-            <div class="flex gap-4">
+            <div>
+              <h1 class="text-2xl font-bold">🏆 Sorteo de Ganador</h1>
+              <h2 class="text-lg font-semibold text-purple-100">
+                Hotel Mirador del Lago
+              </h2>
+            </div>
+            <div class="flex gap-3">
               <NuxtLink
                 to="/admin/contestants"
-                class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-4 py-2 rounded-md"
+                class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 👥 Concursantes
               </NuxtLink>
               <button
                 @click="logout"
-                class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md"
+                class="bg-red-500 hover:bg-red-600 font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
               >
-                Salir
+                🚪 Salir
               </button>
             </div>
           </div>
@@ -102,6 +109,10 @@
 
 <script setup>
 definePageMeta({ middleware: "admin", layout: false });
+
+useHead({
+  title: "Sorteo de Ganador - Hotel Mirador del Lago",
+});
 
 const router = useRouter();
 const { getWinner, drawWinner } = useApi();

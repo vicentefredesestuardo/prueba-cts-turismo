@@ -7,7 +7,12 @@
         <h1 class="text-3xl font-bold text-pink-600 mb-2">
           💕 Concurso San Valentín
         </h1>
-        <p class="text-gray-600">¡Inscríbete y gana 2 noches románticas!</p>
+        <h2 class="text-xl font-semibold text-gray-800 mb-2">
+          Hotel Mirador del Lago
+        </h2>
+        <p class="text-gray-600">
+          ¡Inscríbete y gana 2 noches románticas en nuestro hotel!
+        </p>
       </div>
 
       <form @submit.prevent="handleSubmit" class="space-y-4" novalidate>
@@ -92,6 +97,10 @@
 
 <script setup>
 definePageMeta({ layout: false });
+
+useHead({
+  title: "Concurso San Valentín - Hotel Mirador del Lago",
+});
 
 const { registerContestant } = useApi();
 

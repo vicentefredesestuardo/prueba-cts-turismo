@@ -84,11 +84,16 @@ class EmailVerificationSerializer(serializers.Serializer):
 
         # Crea o vincula User y setea password
         if not contestant.user:
-            user = User.objects.create(
+            user, _ = User.objects.get_or_create(
                 username=contestant.email.lower(),
-                email=contestant.email.lower(),
-                is_active=True,
+                defaults={
+                    'email': contestant.email.lower(),
+                    'is_active': True,
+                }
             )
+            # Vincula el user al contestant
+            contestant.user = user
+            contestant.save(update_fields=['user'])
         else:
             user = contestant.user
 

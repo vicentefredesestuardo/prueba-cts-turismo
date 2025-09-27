@@ -17,10 +17,18 @@ export const useApi = () => {
 
   // Público
   const registerContestant = (data: any) =>
-    apiFetch('/contestants/', { method: 'POST', body: data })
+    $fetch('/contestants/', { 
+      baseURL: apiBase,
+      method: 'POST', 
+      body: data 
+    })
 
   const verifyEmail = (data: any) =>
-    apiFetch('/verification/', { method: 'POST', body: data })
+    $fetch('/verification/', { 
+      baseURL: apiBase,
+      method: 'POST', 
+      body: data 
+    })
 
   // Admin auth (SimpleJWT)
   const adminLogin = (data: any) =>

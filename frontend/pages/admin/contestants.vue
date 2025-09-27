@@ -8,9 +8,12 @@
         >
           <div class="flex justify-between items-center">
             <div>
-              <h1 class="text-3xl font-bold">👥 Lista de Concursantes</h1>
+              <h1 class="text-3xl font-bold">👥 Concursantes</h1>
+              <h2 class="text-xl font-semibold text-purple-100">
+                Hotel Mirador del Lago
+              </h2>
               <p class="text-purple-100 mt-1">
-                Gestiona los participantes del concurso
+                Gestiona los participantes del concurso de San Valentín
               </p>
             </div>
             <div class="flex gap-3">
@@ -163,6 +166,10 @@
 
 <script setup>
 definePageMeta({ middleware: ["admin"], layout: false });
+
+useHead({
+  title: "Concursantes - Hotel Mirador del Lago",
+});
 
 const router = useRouter();
 const { getContestants } = useApi();

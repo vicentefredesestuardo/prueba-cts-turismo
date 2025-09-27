@@ -7,7 +7,12 @@
         <h1 class="text-3xl font-bold text-green-600 mb-2">
           ✅ Verificar Cuenta
         </h1>
-        <p class="text-gray-600">Completa tu registro creando una contraseña</p>
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">
+          Hotel Mirador del Lago
+        </h2>
+        <p class="text-gray-600">
+          Completa tu registro para el concurso de San Valentín
+        </p>
       </div>
 
       <form @submit.prevent="handleVerify" class="space-y-4">
@@ -63,6 +68,10 @@
 
 <script setup>
 definePageMeta({ layout: false });
+
+useHead({
+  title: "Verificar Cuenta - Hotel Mirador del Lago",
+});
 
 const route = useRoute();
 const router = useRouter();

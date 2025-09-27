@@ -27,6 +27,9 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 # URL del frontend para links de verificación
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
+# Branding
+HOTEL_NAME = "Hotel Mirador del Lago"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",

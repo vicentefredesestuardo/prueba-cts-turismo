@@ -5,7 +5,12 @@
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-blue-600 mb-2">🔐 Admin Login</h1>
-        <p class="text-gray-600">Acceso exclusivo para administradores</p>
+        <h2 class="text-lg font-semibold text-gray-800 mb-2">
+          Hotel Mirador del Lago
+        </h2>
+        <p class="text-gray-600">
+          Acceso exclusivo para administradores del hotel
+        </p>
       </div>
 
       <form @submit.prevent="handleLogin" class="space-y-4" novalidate>
@@ -53,6 +58,10 @@
 
 <script setup>
 definePageMeta({ layout: false });
+
+useHead({
+  title: "Login Administrador - Hotel Mirador del Lago",
+});
 
 const router = useRouter();
 const { adminLogin } = useApi();
