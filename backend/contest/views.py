@@ -74,9 +74,9 @@ def list_contestants(request):
     """Listar concursantes con paginación y filtros"""
     contestants = Contestant.objects.all().order_by('-created_at')
     
-    # Filtros
+    # ARREGLAR ESTA PARTE:
     verified = request.GET.get('verified')
-    if verified is not None:
+    if verified is not None and verified.strip():  # ← AGREGAR .strip() check
         contestants = contestants.filter(is_verified=verified.lower() == 'true')
     
     search = request.GET.get('search')

@@ -3,7 +3,7 @@ export const useApi = () => {
 
   const getToken = () => (process.client ? localStorage.getItem('access_token') : null)
 
-  const apiFetch = (url: string, options: any = {}) => {
+  const apiFetch = (url, options = {}) => {
     const token = getToken()
     return $fetch(url, {
       baseURL: apiBase, 

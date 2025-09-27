@@ -62,60 +62,62 @@
 </template>
 
 <script setup>
-definePageMeta({ layout: false })
+definePageMeta({ layout: false });
 
-const route = useRoute()
-const router = useRouter()
-const { verifyEmail } = useApi()
+const route = useRoute();
+const router = useRouter();
+const { verifyEmail } = useApi();
 
-const token = computed(() => (route.query.token as string) || '')
+const token = computed(() => route.query.token || "");
 
-const form = ref({ password: '', password_confirm: '' })
-const loading = ref(false)
-const message = ref('')
-const messageClass = ref('')
+const form = ref({ password: "", password_confirm: "" });
+const loading = ref(false);
+const message = ref("");
+const messageClass = ref("");
 
 onMounted(() => {
   if (!token.value) {
-    message.value = "Token de verificación no encontrado en la URL."
-    messageClass.value = "bg-yellow-100 text-yellow-800 border border-yellow-300"
+    message.value = "Token de verificación no encontrado en la URL.";
+    messageClass.value =
+      "bg-yellow-100 text-yellow-800 border border-yellow-300";
   }
-})
+});
 
 const handleVerify = async () => {
-  if (!token.value) return
+  if (!token.value) return;
   if (form.value.password !== form.value.password_confirm) {
-    message.value = "Las contraseñas no coinciden."
-    messageClass.value = "bg-red-100 text-red-700 border border-red-300"
-    return
+    message.value = "Las contraseñas no coinciden.";
+    messageClass.value = "bg-red-100 text-red-700 border border-red-300";
+    return;
   }
 
-  loading.value = true
-  message.value = ""
+  loading.value = true;
+  message.value = "";
 
   try {
     await verifyEmail({
       token: token.value,
       password: form.value.password,
-      password_confirm: form.value.password_confirm
-    })
+      password_confirm: form.value.password_confirm,
+    });
 
-    message.value = "Tu cuenta ha sido activada. Ya estás participando en el sorteo."
-    messageClass.value = "bg-green-100 text-green-700 border border-green-300"
-    setTimeout(() => router.push("/"), 2000)
+    message.value =
+      "Tu cuenta ha sido activada. Ya estás participando en el sorteo.";
+    messageClass.value = "bg-green-100 text-green-700 border border-green-300";
+    setTimeout(() => router.push("/"), 2000);
   } catch (e) {
     // DRF: puede venir detail, token, password, non_field_errors, etc.
-    const data = e?.data || {}
+    const data = e?.data || {};
     const first =
       data.detail ||
       data.token ||
       data.password ||
       data.non_field_errors?.[0] ||
-      "Error al verificar tu cuenta. Intenta nuevamente."
-    message.value = Array.isArray(first) ? first[0] : first
-    messageClass.value = "bg-red-100 text-red-700 border border-red-300"
+      "Error al verificar tu cuenta. Intenta nuevamente.";
+    message.value = Array.isArray(first) ? first[0] : first;
+    messageClass.value = "bg-red-100 text-red-700 border border-red-300";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
