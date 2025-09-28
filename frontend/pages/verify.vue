@@ -3,6 +3,7 @@
     class="min-h-screen bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center p-4"
   >
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+      <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-green-600 mb-2">
           ✅ Verificar Cuenta
@@ -15,6 +16,7 @@
         </p>
       </div>
 
+      <!-- Formulario -->
       <form @submit.prevent="handleVerify" class="space-y-4">
         <div>
           <label
@@ -102,6 +104,7 @@
         </button>
       </form>
 
+      <!-- Mensajes de estado -->
       <div
         v-if="!token"
         class="mt-4 p-3 rounded-md bg-yellow-100 text-yellow-800 border border-yellow-300"
@@ -140,14 +143,13 @@ const errors = ref({});
 const touched = ref({});
 const triedSubmit = ref(false);
 
+// Funciones de validación
 const markTouched = (field) => {
   touched.value[field] = true;
 };
 
 const validateField = (field) => {
   const value = form.value[field];
-
-  // Limpiar error anterior
   delete errors.value[field];
 
   switch (field) {
@@ -186,6 +188,7 @@ onMounted(() => {
   }
 });
 
+// Manejo del formulario
 const handleVerify = async () => {
   if (!token.value) return;
 
@@ -193,7 +196,6 @@ const handleVerify = async () => {
   message.value = "";
   messageClass.value = "";
 
-  // Validar antes de enviar
   if (!validateAll()) {
     return;
   }

@@ -119,11 +119,15 @@ useHead({
 const router = useRouter();
 const { getWinner, drawWinner } = useApi();
 
+// Estado del ganador
 const winner = ref(null);
+
+// Estado de carga y mensajes
 const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
 
+// Funciones de gestión
 const loadWinner = async () => {
   try {
     const res = await getWinner();
@@ -155,6 +159,7 @@ const loadWinner = async () => {
   }
 };
 
+// Funciones del sorteo
 const draw = async () => {
   if (winner.value) {
     message.value = "Ya se ha realizado el sorteo.";
@@ -199,6 +204,7 @@ const draw = async () => {
   }
 };
 
+// Funciones auxiliares
 const formatDate = (iso) =>
   new Date(iso).toLocaleDateString("es-CL", {
     year: "numeric",

@@ -186,10 +186,15 @@ useHead({
 const router = useRouter();
 const { getContestants } = useApi();
 
+// Lista de concursantes
 const contestants = ref([]);
+
+// Estado de carga y mensajes
 const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
+
+// Filtros y paginación
 const search = ref("");
 const verifiedFilter = ref("");
 const currentPage = ref(1);
@@ -197,6 +202,7 @@ const pageSize = 50;
 const totalPages = ref(1);
 const totalCount = ref(0);
 
+// Funciones de gestión
 const fetchContestants = async () => {
   loading.value = true;
   message.value = "";
@@ -240,6 +246,7 @@ const fetchContestants = async () => {
   }
 };
 
+// Funciones de filtros y paginación
 const applyFilters = () => {
   currentPage.value = 1;
   fetchContestants();
@@ -258,6 +265,7 @@ const goToPage = (p) => {
   fetchContestants();
 };
 
+// Funciones auxiliares
 const formatDate = (iso) => {
   return new Date(iso).toLocaleDateString("es-CL", {
     year: "numeric",

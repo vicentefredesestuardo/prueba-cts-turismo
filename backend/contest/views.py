@@ -12,32 +12,22 @@ from .serializers import (
     WinnerDrawSerializer
 )
 from .tasks import send_verification_email, send_winner_notification
+from .utils import normalize_contestant_fields
 
 
-# =============================================================================
-# ENDPOINTS PÚBLICOS
-# =============================================================================
+# Endpoints públicos
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def register_contestant(request):
     """Inscripción al concurso"""
-    # Normalizar datos antes de enviar al serializer
-    data = request.data.copy()
-    for k in ('first_name', 'last_name', 'second_last_name', 'email', 'phone'):
-        if k in data and isinstance(data[k], str):
-            data[k] = data[k].strip()
-    if 'email' in data:
-        data['email'] = data['email'].lower()
+    data = normalize_contestant_fields(request.data.copy())
     
     serializer = ContestantRegistrationSerializer(data=data)
     if serializer.is_valid():
         contestant = serializer.save()
         
-        # Crear token de verificación
         token = EmailVerificationToken.objects.create(contestant=contestant)
-        
-        # Enviar email de verificación (asíncrono)
         send_verification_email.delay(contestant.id, str(token.token))
         
         return Response({
@@ -64,9 +54,7 @@ def verify_email_and_set_password(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# =============================================================================
-# ENDPOINTS ADMIN
-# =============================================================================
+# Endpoints admin
 
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
@@ -74,9 +62,8 @@ def list_contestants(request):
     """Listar concursantes con paginación y filtros"""
     contestants = Contestant.objects.all().order_by('-created_at')
     
-    # ARREGLAR ESTA PARTE:
     verified = request.GET.get('verified')
-    if verified is not None and verified.strip():  # ← AGREGAR .strip() check
+    if verified is not None and verified.strip():  
         contestants = contestants.filter(is_verified=verified.lower() == 'true')
     
     search = request.GET.get('search')
@@ -88,15 +75,13 @@ def list_contestants(request):
             Q(email__icontains=search)
         )
     
-    # Paginación
     try:
         page = int(request.GET.get('page', 1))
         page_size = int(request.GET.get('page_size', 50))
     except ValueError:
         page, page_size = 1, 50
     page = max(page, 1)
-    page_size = max(min(page_size, 200), 1)  # límite superior sano
-
+    page_size = max(min(page_size, 200), 1)  
     start = (page - 1) * page_size
     end = start + page_size
     
@@ -119,7 +104,6 @@ def winner_view(request):
     POST: Sortear ganador (solo uno permitido)
     """
     if request.method == 'POST':
-        # SORTEAR GANADOR
         # Verificar que no haya ganador previo
         if WinnerDraw.objects.exists():
             return Response({
@@ -145,7 +129,6 @@ def winner_view(request):
         }, status=status.HTTP_201_CREATED)
     
     elif request.method == 'GET':
-        # VER GANADOR ACTUAL
         try:
             winner = WinnerDraw.objects.select_related('contestant').latest('drawn_at')
             return Response({

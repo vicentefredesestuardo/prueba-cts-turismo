@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
-# Validador E.164 (opcional '+' y 8-15 dígitos)
 phone_validator = RegexValidator(
     regex=r'^\+?[1-9]\d{7,14}$',
     message="Ingrese un teléfono válido en formato internacional (E.164), ej: +56912345678."

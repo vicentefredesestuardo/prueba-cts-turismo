@@ -3,6 +3,7 @@
     class="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4"
   >
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+      <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-blue-600 mb-2">🔐 Admin Login</h1>
         <h2 class="text-lg font-semibold text-gray-800 mb-2">
@@ -13,6 +14,7 @@
         </p>
       </div>
 
+      <!-- Formulario de login -->
       <form @submit.prevent="handleLogin" class="space-y-4" novalidate>
         <div>
           <label
@@ -91,6 +93,7 @@
         </button>
       </form>
 
+      <!-- Mensaje de estado -->
       <div v-if="message" class="mt-4 p-3 rounded-md" :class="messageClass">
         {{ message }}
       </div>
@@ -108,7 +111,10 @@ useHead({
 const router = useRouter();
 const { adminLogin } = useApi();
 
+// Formulario de login
 const form = ref({ username: "", password: "" });
+
+// Estado de carga y mensajes
 const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
@@ -118,14 +124,13 @@ const errors = ref({});
 const touched = ref({});
 const triedSubmit = ref(false);
 
+// Funciones de validación
 const markTouched = (field) => {
   touched.value[field] = true;
 };
 
 const validateField = (field) => {
   const value = form.value[field];
-
-  // Limpiar error anterior
   delete errors.value[field];
 
   switch (field) {
@@ -152,7 +157,7 @@ const validateAll = () => {
   return Object.keys(errors.value).length === 0;
 };
 
-// Si ya hay token válido, manda directo al panel
+// Verificación de token existente
 onMounted(() => {
   if (process.client) {
     const token = localStorage.getItem("access_token");
@@ -170,6 +175,7 @@ function isExpired(jwt) {
   }
 }
 
+// Manejo del formulario
 const handleLogin = async () => {
   if (loading.value) return;
 
@@ -177,7 +183,6 @@ const handleLogin = async () => {
   message.value = "";
   messageClass.value = "";
 
-  // Validar antes de enviar
   if (!validateAll()) {
     return;
   }
@@ -185,9 +190,7 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    // Llama al backend: POST /api/admin/login/
     const res = await adminLogin({ ...form.value });
-    // SimpleJWT responde { access, refresh }
     localStorage.setItem("access_token", res.access);
     localStorage.setItem("refresh_token", res.refresh);
 

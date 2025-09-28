@@ -6,7 +6,6 @@ export default defineNuxtRouteMiddleware(() => {
     return navigateTo('/admin/login')
   }
 
-  // (Opcional) Validar expiración del JWT sin pegarle al backend
   try {
     const payload = JSON.parse(atob(token.split('.')[1]))
     const now = Math.floor(Date.now() / 1000)
@@ -15,7 +14,6 @@ export default defineNuxtRouteMiddleware(() => {
       return navigateTo('/admin/login')
     }
   } catch {
-    // Si el token está corrupto, limpia y redirige
     localStorage.removeItem('access_token')
     return navigateTo('/admin/login')
   }

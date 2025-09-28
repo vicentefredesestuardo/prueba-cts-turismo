@@ -3,6 +3,7 @@
     class="min-h-screen bg-gradient-to-br from-pink-100 to-red-100 flex items-center justify-center p-4"
   >
     <div class="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
+      <!-- Header -->
       <div class="text-center mb-8">
         <h1 class="text-3xl font-bold text-pink-600 mb-2">
           💕 Concurso San Valentín
@@ -15,6 +16,7 @@
         </p>
       </div>
 
+      <!-- Formulario -->
       <form @submit.prevent="handleSubmit" class="space-y-4" novalidate>
         <div>
           <label
@@ -176,6 +178,7 @@
         </button>
       </form>
 
+      <!-- Mensaje de estado -->
       <div v-if="message" class="mt-4 p-3 rounded-md" :class="messageClass">
         {{ message }}
       </div>
@@ -192,6 +195,7 @@ useHead({
 
 const { registerContestant } = useApi();
 
+// Formulario de registro
 const form = ref({
   first_name: "",
   last_name: "",
@@ -200,6 +204,7 @@ const form = ref({
   phone: "",
 });
 
+// Estado de carga y mensajes
 const loading = ref(false);
 const message = ref("");
 const messageClass = ref("");
@@ -209,18 +214,17 @@ const errors = ref({});
 const touched = ref({});
 const triedSubmit = ref(false);
 
-// Helpers de validación
+// Validadores
 const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
 const isE164 = (s) => /^\+?[1-9]\d{7,14}$/.test(s);
 
+// Funciones de validación
 const markTouched = (field) => {
   touched.value[field] = true;
 };
 
 const validateField = (field) => {
   const value = form.value[field];
-
-  // Limpiar error anterior
   delete errors.value[field];
 
   switch (field) {
@@ -268,17 +272,16 @@ const validateAll = () => {
   return Object.keys(errors.value).length === 0;
 };
 
+// Manejo del formulario
 const handleSubmit = async () => {
   message.value = "";
   messageClass.value = "";
   triedSubmit.value = true;
 
-  // Validar antes de enviar
   if (!validateAll()) {
     return;
   }
 
-  // Normaliza email y phone para coincidir con backend
   const payload = {
     first_name: (form.value.first_name || "").trim(),
     last_name: (form.value.last_name || "").trim(),
@@ -295,7 +298,6 @@ const handleSubmit = async () => {
       "¡Gracias por registrarte! Revisa tu correo para verificar tu cuenta (puede llegar a Spam).";
     messageClass.value = "bg-green-100 text-green-700 border border-green-300";
 
-    // Limpia formulario
     form.value = {
       first_name: "",
       last_name: "",

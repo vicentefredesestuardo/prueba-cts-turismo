@@ -4,7 +4,15 @@ from django.conf import settings
 from .models import Contestant
 
 def _send_html_email(subject, text, html, to):
-    """Helper para enviar emails HTML"""
+    """
+    Helper para enviar emails HTML con texto alternativo.
+    
+    Args:
+        subject (str): Asunto del email
+        text (str): Versión de texto plano del mensaje
+        html (str): Versión HTML del mensaje
+        to (str): Email del destinatario
+    """
     from_email = f"{settings.HOTEL_NAME} <{settings.DEFAULT_FROM_EMAIL}>"
     msg = EmailMultiAlternatives(subject, text, from_email, [to])
     msg.attach_alternative(html, "text/html")
@@ -12,7 +20,16 @@ def _send_html_email(subject, text, html, to):
 
 @shared_task
 def send_verification_email(contestant_id, token):
-    """Enviar email de verificación con HTML"""
+    """
+    Envía email de verificación a un concursante con HTML y texto alternativo.
+    
+    Args:
+        contestant_id (int): ID del concursante en la base de datos
+        token (str): Token UUID para verificación de email
+    
+    Returns:
+        None: Tarea asíncrona de Celery
+    """
     try:
         c = Contestant.objects.get(id=contestant_id)
         verification_url = f"{settings.FRONTEND_URL}/verify?token={token}"
@@ -41,7 +58,15 @@ def send_verification_email(contestant_id, token):
 
 @shared_task
 def send_winner_notification(contestant_id):
-    """Enviar email al ganador con HTML"""
+    """
+    Envía notificación de ganador a un concursante con HTML y texto alternativo.
+    
+    Args:
+        contestant_id (int): ID del concursante ganador en la base de datos
+    
+    Returns:
+        None: Tarea asíncrona de Celery
+    """
     try:
         c = Contestant.objects.get(id=contestant_id)
         

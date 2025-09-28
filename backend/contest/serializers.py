@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.db.models.functions import Lower
 
 from .models import Contestant, EmailVerificationToken, WinnerDraw
+from .utils import normalize_contestant_fields
 
 
 class ContestantRegistrationSerializer(serializers.ModelSerializer):
@@ -15,13 +16,7 @@ class ContestantRegistrationSerializer(serializers.ModelSerializer):
         fields = ["first_name", "last_name", "second_last_name", "email", "phone"]
 
     def validate(self, attrs):
-        # normaliza inputs
-        for k in ("first_name", "last_name", "second_last_name"):
-            if k in attrs and attrs[k]:
-                attrs[k] = attrs[k].strip()
-        attrs["email"] = attrs["email"].strip().lower()
-        attrs["phone"] = attrs["phone"].strip()
-        return attrs
+        return normalize_contestant_fields(attrs)
 
     def validate_email(self, value):
         if Contestant.objects.filter(email__iexact=value.strip()).exists():
@@ -65,8 +60,8 @@ class EmailVerificationSerializer(serializers.Serializer):
             raise serializers.ValidationError("Token de verificación inválido.")
         if token_obj.is_expired():
             raise serializers.ValidationError("El token de verificación ha expirado.")
-        return token_obj  # ← devolvemos el objeto, no solo el UUID
-
+        return token_obj  
+    
     def create(self, validated_data):
         """
         La view hará serializer.save() para ejecutar esta lógica:
@@ -107,8 +102,7 @@ class EmailVerificationSerializer(serializers.Serializer):
         token_obj.used_at = timezone.now()
         token_obj.save(update_fields=["used_at"])
 
-        return contestant  # puedes devolver datos del concursante si quieres
-
+        return contestant 
 
 class EmailVerificationTokenSerializer(serializers.ModelSerializer):
     contestant_name = serializers.CharField(source="contestant.full_name", read_only=True)
